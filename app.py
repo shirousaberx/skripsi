@@ -25,23 +25,10 @@ def get_secure_filename(filename):
 
 @app.route('/')
 def index():
-    return render_template('index.jinja2', klasifikasi=True)
-
-@app.route('/upload_csv')
-def upload_csv():
-    return render_template('upload_csv.jinja2', upload_csv=True)
-
-@app.route('/hasil_upload_csv')
-def hasil_upload_csv():
-    return render_template('hasil_upload_csv.jinja2', upload_csv=True)
-
-@app.route('/evaluasi')
-def evaluasi():
-    return render_template('evaluasi.jinja2', evaluasi=True)
-
-@app.route('/hasil_evaluasi')
-def hasil_evaluasi():
-    return render_template('hasil_evaluasi.jinja2', evaluasi=True)
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    if 'email' in session:
+        if session['role'] == 'Administrator':
+            return redirect('/manage_produk')
+        else:
+            return redirect('/list_sewa')
+    else:
+        return redirect('/login')
