@@ -1,0 +1,33 @@
+{% extends 'layout.jinja2' %}
+{% block content %}
+  {% for message, category in get_flashed_messages(with_categories=True) %}
+  <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+    <strong>{{ message }}</strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {% endfor %}
+
+  <header class="container my-5">
+    <h1 class="text-center">Upload CSV</h1>
+  </header>
+
+  <main class="container">
+    <form>
+      <div class="row">
+        <div class="col-md-12">
+          <label for="formFileLg" class="form-label">Pilih file csv:</label>
+          <input class="form-control form-control-lg" id="formFileLg" type="file">
+          <small>Catatan: File csv hanya terdiri dari 1 kolom ulasan</small>
+        </div>    
+      </div>
+    
+      <div class="row my-5">
+        <div class="col-md-12 text-center">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+    </form>
+  </main>
+{% endblock %}

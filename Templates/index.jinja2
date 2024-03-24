@@ -1,0 +1,34 @@
+{% extends 'layout.jinja2' %}
+{% block content %}
+  <header class="container my-5">
+    <h1 class="text-center">Klasifikasi</h1>
+  </header>
+
+  <main class="container">
+    <form>
+      <div class="row">
+        <div class="col-md-10 form-group">
+          <label for="exampleInputEmail1">Ulasan</label>
+          <input type="text" class="form-control" placeholder="Masukkan ulasan">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="row">
+      <div class="col-md-12 d-flex flex-row justify-content-center my-5">
+        <p class="d-block">
+          Hasil Preprocessing :
+          <br />
+          <br />
+          Output model :
+          <br />
+          <br />
+          Hasil klasifikasi :
+        </p>
+      </div>
+    </div>
+  </main>
+{% endblock %}
