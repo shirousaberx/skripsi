@@ -1,7 +1,7 @@
 <!-- Halaman ini menampilkan hasil upload csv setelah pengguna mengupload file csv -->
 {% extends 'layout.jinja2' %}
 {% block content %}
-  <div id="loading-overlay" class="d-none">
+  <div id="loading-overlay">
     <div class="spinner"></div>
     <div>Proses ini dapat memakan waktu lama</div>
   </div>
@@ -14,11 +14,11 @@
     <div class="row"> <!-- 10 kata terbanyak ulasan positif dan negatif -->
       <div class="col-lg-6 text-center"> <!-- 10 kata terbanyak ulasan positif -->
         <h5>10 kata terbanyak dari ulasan positif</h5>
-        <img src="https://picsum.photos/400/200" alt="">
+        <img src="{{ url_for('static', filename='images/' + frekuensi_positif) }}" style="width: 100%;" alt="">
       </div>
       <div class="col-lg-6 text-center mt-3 mt-lg-0"> <!-- 10 kata terbanyak ulasan negatif -->
         <h5>10 kata terbanyak dari ulasan negatif</h5>
-        <img src="https://picsum.photos/400/200" alt="">
+        <img src="{{ url_for('static', filename='images/' + frekuensi_negatif) }}" style="width: 100%;" alt="">
       </div>
     </div>
     <div class="row my-5"> <!-- tabel -->
@@ -28,32 +28,47 @@
         <thead>
           <tr>
             <th class="text-center" scope="col" style="width: 5%;">#</th>
-            <th class="text-center" scope="col">Ulasan</th>
-            <th class="text-center" scope="col" style="width: 10%;">Label</th>
-            <th class="text-center" scope="col" style="width: 10%;">Prediksi</th>
+            <th class="text-center" scope="col" style="width: 45%;">Ulasan</th>
+            <th class="text-center" scope="col" style="width: 45%;">Preprocessed</th>
+            <th class="text-center" scope="col" style="width: 5%;">Prediksi</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <th class="text-center" scope="row">1</th>
-            <td>Mark</td>
-            <td class="text-center">1</td>
-            <td class="text-center">0</td>
-          </tr>
-          <tr>
-            <th class="text-center" scope="row">2</th>
-            <td>Jacob</td>
-            <td class="text-center">0</td>
-            <td class="text-center">0</td>
-          </tr>
-          <tr>
-            <th class="text-center" scope="row">3</th>
-            <td>Larry the Bird</td>
-            <td class="text-center">1</td>
-            <td class="text-center">0</td>
-          </tr>
+        <tbody id="table-body">
+
         </tbody>
       </table>
     </div>
   </main>
+
+  <script>
+    const table_body = document.querySelector('#table-body');
+    const loading_overlay = document.querySelector('#loading-overlay');
+
+    async function get_data(url = "") {
+      const response = await fetch(url, {method: "POST"});
+      return response.json();
+    }
+
+    async function populate_table() {
+      const data = await get_data('http://localhost:5000/hasil_upload_csv')
+      console.log(data)
+
+      for (let idx = 0; idx < Object.keys(data.content).length; ++idx) {
+        const new_row = document.createElement('tr');
+        new_row.innerHTML = `
+              <td class="text-center" scope="row">${idx+1}</td>
+              <td>${data.content[idx]}</td>
+              <td>${data.preprocessed_content[idx]}</td>
+              <td class="text-center">${data.predicted_label[idx]}</td>
+              `;
+
+        table_body.appendChild(new_row);
+      }
+
+      loading_overlay.classList.add('d-none')
+    }
+
+    populate_table();
+
+  </script>
 {% endblock %}

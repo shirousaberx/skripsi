@@ -5,11 +5,11 @@
   </header>
 
   <main class="container">
-    <form>
+    <form method="get" action="{{ url_for('index') }}">
       <div class="row">
         <div class="col-md-10 form-group">
-          <label for="exampleInputEmail1">Ulasan</label>
-          <input type="text" class="form-control" placeholder="Masukkan ulasan">
+          <label for="ulasan">Ulasan</label>
+          <input id="ulasan" name="ulasan" type="text" class="form-control" placeholder="Masukkan ulasan">
         </div>
         <div class="col-md-2 d-flex align-items-end">
           <button type="submit" class="btn btn-primary">Submit</button>
