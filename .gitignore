@@ -1,5 +1,6 @@
-html_without_jinja2/
 env/
 __pycache__/
-ulasan_with_prediction.csv
-static/csv/
+html_without_jinja2/
+
+static/
+

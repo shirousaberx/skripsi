@@ -1,7 +1,7 @@
 <!-- Halaman ini menampilkan hasil evaluasi setelah pengguna mengupload file csv -->
 {% extends 'layout.jinja2' %}
 {% block content %}
-  <div id="loading-overlay" class="d-none">
+  <div id="loading-overlay">
     <div class="spinner"></div>
     <div>Proses ini dapat memakan waktu lama</div>
   </div>
@@ -13,16 +13,12 @@
   <main class="container">
     <div class="row"> <!-- score dan confusion matrix -->
       <div class="col-md-6 d-flex justify-content-center align-items-center"> <!-- score -->
-        <p>
-          F1 score :
-          <br />
-          <br />
-          <br />
-          Akurasi biner :
+        <p id="model-performance">
+          
         </p>
       </div>
       <div class="col-md-6 text-center mt-3 mt-md-0"> <!-- confusion matrix -->
-        <img src="{{ url_for('static', filename='images/' + confusion_matrix) }}" style="width: 100%;" alt="">
+        <img id="confusion-matrix" style="width: 100%;" alt="">
       </div>
     </div>
     <div class="row my-5"> <!-- tabel -->
@@ -48,15 +44,29 @@
   <script>
     const table_body = document.querySelector('#table-body');
     const loading_overlay = document.querySelector('#loading-overlay');
+    const confusion_matrix = document.querySelector('#confusion-matrix');
+    const model_performance = document.querySelector('#model-performance')
 
     async function get_data(url = "") {
       const response = await fetch(url, {method: "POST"});
       return response.json();
     }
 
-    async function populate_table() {
-      const data = await get_data('http://localhost:5000/hasil_upload_csv')
+    async function populate_fields() {
+      const data = await get_data('http://localhost:5000/hasil_evaluasi')
       console.log(data)
+
+      // populate model performance
+      model_performance.innerHTML = `
+          F1 score : ${data.f1_score}
+          <br />
+          <br />
+          <br />
+          Akurasi biner : ${data.binary_accuracy}
+        `
+
+      // show image of confusion matrix
+      confusion_matrix.src = data.confusion_matrix;
 
       for (let idx = 0; idx < Object.keys(data.content).length; ++idx) {
         const new_row = document.createElement('tr');
@@ -75,7 +85,7 @@
       loading_overlay.classList.add('d-none')
     }
 
-    populate_table();
+    populate_fields();
 
   </script>
 {% endblock %}

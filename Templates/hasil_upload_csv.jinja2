@@ -14,11 +14,11 @@
     <div class="row"> <!-- 10 kata terbanyak ulasan positif dan negatif -->
       <div class="col-lg-6 text-center"> <!-- 10 kata terbanyak ulasan positif -->
         <h5>10 kata terbanyak dari ulasan positif</h5>
-        <img src="{{ url_for('static', filename='images/' + frekuensi_positif) }}" style="width: 100%;" alt="">
+        <img id='frekuensi_positif' style="width: 100%;" alt="">
       </div>
       <div class="col-lg-6 text-center mt-3 mt-lg-0"> <!-- 10 kata terbanyak ulasan negatif -->
         <h5>10 kata terbanyak dari ulasan negatif</h5>
-        <img src="{{ url_for('static', filename='images/' + frekuensi_negatif) }}" style="width: 100%;" alt="">
+        <img id="frekuensi_negatif" style="width: 100%;" alt="">
       </div>
     </div>
     <div class="row my-5"> <!-- tabel -->
@@ -43,16 +43,22 @@
   <script>
     const table_body = document.querySelector('#table-body');
     const loading_overlay = document.querySelector('#loading-overlay');
+    const frekuensi_positif = document.querySelector('#frekuensi_positif')
+    const frekuensi_negatif = document.querySelector('#frekuensi_negatif')
 
     async function get_data(url = "") {
       const response = await fetch(url, {method: "POST"});
       return response.json();
     }
 
-    async function populate_table() {
+    async function populate_fields() {
       const data = await get_data('http://localhost:5000/hasil_upload_csv')
       console.log(data)
+      // show image of word frequency
+      frekuensi_positif.src = data.frekuensi_positif;
+      frekuensi_negatif.src = data.frekuensi_negatif;
 
+      // Populate table
       for (let idx = 0; idx < Object.keys(data.content).length; ++idx) {
         const new_row = document.createElement('tr');
         new_row.innerHTML = `
@@ -68,7 +74,7 @@
       loading_overlay.classList.add('d-none')
     }
 
-    populate_table();
+    populate_fields();
 
   </script>
 {% endblock %}

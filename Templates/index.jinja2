@@ -5,11 +5,11 @@
   </header>
 
   <main class="container">
-    <form method="get" action="{{ url_for('index') }}">
+    <form method="post" action="{{ url_for('index') }}">
       <div class="row">
         <div class="col-md-10 form-group">
           <label for="ulasan">Ulasan</label>
-          <input id="ulasan" name="ulasan" type="text" class="form-control" placeholder="Masukkan ulasan">
+          <input id="ulasan" name="ulasan" type="text" class="form-control" placeholder="Masukkan ulasan" value="{{ ulasan }}" required>
         </div>
         <div class="col-md-2 d-flex align-items-end">
           <button type="submit" class="btn btn-primary">Submit</button>
@@ -20,13 +20,13 @@
     <div class="row">
       <div class="col-md-12 d-flex flex-row justify-content-center my-5">
         <p class="d-block">
-          Hasil Preprocessing :
+          Hasil Preprocessing : {{ hasil_preprocessing }}
           <br />
           <br />
-          Output model :
+          Output model : {{ output_model }}
           <br />
           <br />
-          Hasil klasifikasi :
+          Hasil klasifikasi : {{ hasil_klasifikasi }}
         </p>
       </div>
     </div>
