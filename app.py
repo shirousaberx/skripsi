@@ -84,7 +84,18 @@ def preprocess_text(text):
     text = replace_word_elongation(text)
 
     ## Stemming
-    text = stemmer.stem(text)
+    text = text.split(' ')
+    exclude = ['lemot']
+    stemmed_words = []
+    for word in text:
+        if word in exclude:
+            stemmed_words.append(word)
+        else:
+            stemmed_words.append(stemmer.stem(word))
+    text = ' '.join(stemmed_words)
+
+    ## Remove stopwords
+    # text = remove_stopwords(text)
 
     return text
 
