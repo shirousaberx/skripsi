@@ -193,7 +193,9 @@ def hasil_upload_csv():
     if request.method == 'POST':
         filename = session['uuid'] + '-' + 'upload_csv.csv'
         df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER_CSV'], filename))
-        df = df[['content']]
+
+        # Rename kolom pada file csv
+        df.columns.values[0] = 'content'
 
         df['preprocessed_content'] = df['content'].map(preprocess_text)
         df = df[df['preprocessed_content'] != '']  # Jika content kosong setelah preprocessing, buang row
@@ -226,7 +228,11 @@ def hasil_evaluasi():
     if request.method == 'POST':
         filename = session['uuid'] + '-' + 'upload_csv.csv'
         df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER_CSV'], filename))
-        df = df[['content', 'score', 'label']]
+
+        # Rename kolom pada file csv
+        df.columns.values[0] = 'content'
+        df.columns.values[1] = 'score'
+        df.columns.values[2] = 'label'
 
         df['preprocessed_content'] = df['content'].map(preprocess_text)
         df = df[df['preprocessed_content'] != '']  # Jika content kosong setelah preprocessing, buang row
