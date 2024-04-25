@@ -1,0 +1,55 @@
+{% extends 'layout.jinja2' %}
+{% block content %}
+  {% for category, message in get_flashed_messages(with_categories=True) %}
+  <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+    <strong>{{ message }}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+
+  <header class="container my-5">
+    <h1 class="text-center">Klasifikasi Massal</h1>
+  </header>
+
+  <main class="container">
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('klasifikasi_massal') }}">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-check">
+            <input onChange="toggleUpload()" class="form-check-input" type="radio" name="options" id="flexRadioDefault1" value="upload-csv" checked>
+            <label class="form-check-label" for="flexRadioDefault1">
+              Upload File CSV
+            </label>
+          </div>
+          <label for="upload-csv" class="form-label">Pilih file csv:</label>
+          <input name="file" class="form-control form-control-lg" id="upload-csv" type="file">
+          <small>Catatan: File csv hanya terdiri dari 1 kolom ulasan</small>
+        </div>    
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-12">
+          <div class="form-check">
+            <input onChange="toggleUpload()" class="form-check-input" type="radio" name="options" id="flexRadioDefault2" value="get-new-comments">
+            <label class="form-check-label" for="flexRadioDefault2">
+              Ambil 200 komentar terbaru dari Google Play Store
+            </label>
+          </div>
+        </div>    
+      </div>
+    
+      <div class="row my-5">
+        <div class="col-md-12 text-center">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    upload_csv_input = document.getElementById("upload-csv");
+    function toggleUpload() {
+      upload_csv_input.disabled = !upload_csv_input.disabled
+    }
+  </script>
+{% endblock %}

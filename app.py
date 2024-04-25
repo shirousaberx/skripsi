@@ -7,6 +7,7 @@ import json
 import pandas as pd
 import tensorflow as tf
 import numpy as np
+from google_play_scraper import app, Sort, reviews, reviews_all
 
 # for plotting
 import matplotlib.pyplot as plt
@@ -24,8 +25,8 @@ app = Flask(__name__)
 app.secret_key = '@#$123456&*()'
 
 ALLOWED_EXTENSIONS = {'csv'}
-app.config['UPLOAD_FOLDER_CSV'] = os.path.join(os.getcwd(), 'static/csv')
-app.config['UPLOAD_FOLDER_IMAGES'] = os.path.join(os.getcwd(), 'static/images')
+app.config['UPLOAD_FOLDER_CSV'] = os.path.join(os.getcwd(), r'static\csv')
+app.config['UPLOAD_FOLDER_IMAGES'] = os.path.join(os.getcwd(), r'static\images')
 
 # load model tensorflow
 model = tf.keras.models.load_model('model')
@@ -106,7 +107,7 @@ def handle_upload():
     # check if the post request has the file part
     if 'file' not in request.files:
         flash('File tidak ada', 'danger')
-        return redirect(url_for('upload_csv'))
+        return redirect(url_for('klasifikasi_massal'))
 
     file = request.files['file']
 
@@ -114,15 +115,38 @@ def handle_upload():
     # empty file without a filename
     if file.filename == '':
         flash('Tidak ada file yang dipilih', 'danger')
-        return redirect(url_for('upload_csv'))
+        return redirect(url_for('klasifikasi_massal'))
     if not allowed_file(file.filename): # file extension is not .csv
         flash('Ekstensi file harus .csv', 'danger')
-        return redirect(url_for('upload_csv'))
+        return redirect(url_for('klasifikasi_massal'))
 
-    filename = session['uuid'] + '-' + 'upload_csv.csv'
+    filename = session['uuid'] + '-' + 'klasifikasi_massal.csv'
     file.save(os.path.join(app.config['UPLOAD_FOLDER_CSV'], filename))
 
     return filename
+
+# Ambil 200 komentar baru dari google play store dan simpan dalam file csv
+def get_new_comments():
+    REVIEW_COUNT = 200
+
+    result, continuation_token = reviews(
+        'com.telkom.indihome.external',
+        lang='id',
+        country='id',
+        sort=Sort.NEWEST,
+        count=REVIEW_COUNT
+    )
+
+    # Convert json to table
+    df = pd.DataFrame(np.array(result), columns=['review'])
+    df = pd.DataFrame(df.pop('review').tolist())
+
+    df = df[['content', 'score', 'at']]
+    df['at'] = pd.to_datetime(df['at']).dt.date # Change datetime to date
+
+    filename = session['uuid'] + '-' + 'klasifikasi_massal.csv'
+
+    df.to_csv(os.path.join(app.config['UPLOAD_FOLDER_CSV'], filename), index=False)
 
 # Membuat plot word_frequency dan menyimpan gambarnya di disk
 # Input: dataframe dengan kolom 'preprocessed_content' dan filename dengan ekstensi
@@ -178,20 +202,23 @@ def index():
 
     return render_template('index.jinja2', klasifikasi=True)
 
-@app.route('/upload_csv', methods=['GET', 'POST'])
-def upload_csv():
+@app.route('/klasifikasi_massal', methods=['GET', 'POST'])
+def klasifikasi_massal():
     if request.method == 'POST':
-        handle_upload()
+        if request.form['options'] == 'upload-csv':
+            handle_upload()
+        elif request.form['options'] == 'get-new-comments':
+            get_new_comments()
 
-        return render_template('hasil_upload_csv.jinja2', upload_csv=True)
+        return render_template('hasil_klasifikasi_massal.jinja2', klasifikasi_massal=True)
 
-    return render_template('upload_csv.jinja2', upload_csv=True)
+    return render_template('klasifikasi_massal.jinja2', klasifikasi_massal=True)
 
 # endpoint untuk mendapatkan data dari request ajax
-@app.route('/hasil_upload_csv', methods=['GET', 'POST'])
-def hasil_upload_csv():
+@app.route('/hasil_klasifikasi_massal', methods=['GET', 'POST'])
+def hasil_klasifikasi_massal():
     if request.method == 'POST':
-        filename = session['uuid'] + '-' + 'upload_csv.csv'
+        filename = session['uuid'] + '-' + 'klasifikasi_massal.csv'
         df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER_CSV'], filename))
 
         # Rename kolom pada file csv
@@ -199,6 +226,7 @@ def hasil_upload_csv():
 
         df['preprocessed_content'] = df['content'].map(preprocess_text)
         df = df[df['preprocessed_content'] != '']  # Jika content kosong setelah preprocessing, buang row
+        df = df.reset_index(drop=True)
 
         df['prediction'] = model.predict(np.array(df['preprocessed_content'])) # predict class
         df['predicted_label'] = df.apply(lambda row: (1 if row['prediction'] >= 0.5 else 0), axis=1) # bulatkan prediksi
@@ -226,7 +254,7 @@ def evaluasi():
 @app.route('/hasil_evaluasi', methods=['GET', 'POST'])
 def hasil_evaluasi():
     if request.method == 'POST':
-        filename = session['uuid'] + '-' + 'upload_csv.csv'
+        filename = session['uuid'] + '-' + 'klasifikasi_massal.csv'
         df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER_CSV'], filename))
 
         # Rename kolom pada file csv
@@ -236,6 +264,7 @@ def hasil_evaluasi():
 
         df['preprocessed_content'] = df['content'].map(preprocess_text)
         df = df[df['preprocessed_content'] != '']  # Jika content kosong setelah preprocessing, buang row
+        df = df.reset_index(drop=True)
 
         df['prediction'] = model.predict(np.array(df['preprocessed_content']), batch_size=1024) # predict class
         df['predicted_label'] = df.apply(lambda row: (1 if row['prediction'] >= 0.5 else 0), axis=1) # bulatkan prediksi

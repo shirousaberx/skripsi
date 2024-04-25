@@ -52,7 +52,7 @@
     }
 
     async function populate_fields() {
-      const data = await get_data('http://localhost:5000/hasil_upload_csv')
+      const data = await get_data('http://localhost:5000/hasil_klasifikasi_massal')
       console.log(data)
       // show image of word frequency
       frekuensi_positif.src = data.frekuensi_positif;
