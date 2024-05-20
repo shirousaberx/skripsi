@@ -3,38 +3,45 @@
 This project is about sentiment analysis build using tensorflow and flask
 
 ## To start
-1. Clone this repository
+1. Run Powershell as admin
+
+2. Clone this repository
 ```
 git clone https://github.com/shirousaberx/skripsi
 ```
 
-2. Move to the project directory
+3. Move to the project directory
 ```
 cd skripsi
 ```
 
-3. Create a new virtual environment
+4. Create a new virtual environment
 ```
 python -m venv env
 ```
 
-4. Activate the virtual environment 
+5. Activate the virtual environment 
+> Enable script execution
+```
+set-executionpolicy remotesigned
+```
+
 > Using powershell
 ```
 ./env\Scripts\Activate.ps1
 ```
 
-5. Install all dependencies
+6. Install all dependencies
 ```
 pip install -r requirements.txt
 ```
 
-6. Run
+7. Run
 ```
 flask run
 ```
 
-7. Open browser and type in
+8. Open browser and type in
 ```
 localhost:5000
 ```
