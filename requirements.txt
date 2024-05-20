@@ -8,3 +8,4 @@ Sastrawi==1.0.1
 scikit_learn==1.4.1.post1
 seaborn==0.13.2
 tensorflow==2.15.0
+google-play-scraper
