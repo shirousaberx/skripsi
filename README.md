@@ -42,3 +42,6 @@ flask run
 ```
 localhost:5000
 ```
+
+## Model Training Notebook
+Notebook to train the model can be found [Here](model_training.ipynb)
