@@ -1,6 +1,6 @@
 # Repository for skripsi
 
-This project is about sentiment analysis build using tensorflow and flask
+This project is about sentiment analysis on MyIndiHome user reviews. Built using tensorflow and flask
 
 ## To start (with cmd)
 1. Clone this repository
