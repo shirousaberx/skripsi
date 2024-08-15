@@ -44,4 +44,4 @@ localhost:5000
 ```
 
 ## Model Training Notebook
-Notebook to train the model can be found [Here](model_training.ipynb)
+Notebook to train the model can be found at [model_training.ipynb](model_training.ipynb)
